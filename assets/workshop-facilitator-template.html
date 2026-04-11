@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WORKSHOP_TITLE — Facilitator Guide</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Tokens ─── */
+    :root {
+      --bg: #FAF7F2;
+      --bg-alt: #F0EBE1;
+      --text: #2A2118;
+      --text-muted: #7A6E60;
+      --border: #DDD5C8;
+      --say: #1A6B3A;
+      --say-bg: #EBF7EF;
+      --say-border: #A8D5B5;
+      --do: #1A4B8A;
+      --do-bg: #EBF0F7;
+      --do-border: #A8BDD5;
+      --watch: #8A5A00;
+      --watch-bg: #FBF3E0;
+      --watch-border: #DDB86B;
+      --exercise: #5A1A8A;
+      --exercise-bg: #F3EAF7;
+      --exercise-border: #C4A0D5;
+      --qa-bg: #F5F5F5;
+      --transition-color: #5A6B4A;
+    }
+
+    /* ─── Reset & base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+    }
+
+    /* ─── Page layout ─── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+    }
+
+    /* ─── Header ─── */
+    .doc-header {
+      border-bottom: 3px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .doc-header .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .doc-header h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .doc-header .meta {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── Agenda overview ─── */
+    .agenda-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2.5rem;
+      font-size: 0.9rem;
+    }
+
+    .agenda-table th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+    }
+
+    .agenda-table td {
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--border);
+    }
+
+    .agenda-table tr.break-row td {
+      color: var(--text-muted);
+      font-style: italic;
+      background: var(--bg);
+    }
+
+    /* ─── Segment card ─── */
+    .segment {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 2.5rem;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .segment-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem;
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .segment-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .segment-header h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      flex: 1;
+    }
+
+    .duration-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--text);
+      color: white;
+      padding: 0.2em 0.7em;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .segment-body {
+      padding: 1.5rem;
+    }
+
+    /* ─── Objectives ─── */
+    .objectives {
+      margin-bottom: 1.5rem;
+    }
+
+    .objectives h3 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .objectives ul {
+      padding-left: 1.25rem;
+    }
+
+    .objectives li {
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ─── Typed blocks (say / do / watch / exercise / qa) ─── */
+    .block {
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid;
+    }
+
+    .block-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .facilitator-say  { background: var(--say-bg);      border-color: var(--say-border);      }
+    .facilitator-say  .block-label { color: var(--say); }
+
+    .facilitator-do   { background: var(--do-bg);       border-color: var(--do-border);       }
+    .facilitator-do   .block-label { color: var(--do); }
+
+    .watch-for        { background: var(--watch-bg);    border-color: var(--watch-border);    }
+    .watch-for        .block-label { color: var(--watch); }
+
+    .exercise-brief   { background: var(--exercise-bg); border-color: var(--exercise-border); }
+    .exercise-brief   .block-label { color: var(--exercise); }
+
+    .anticipated-qa   { background: var(--qa-bg);       border-left-color: var(--border);     }
+    .anticipated-qa   .block-label { color: var(--text-muted); }
+
+    .block p { font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .block p:last-child { margin-bottom: 0; }
+
+    /* ─── Q&A pairs ─── */
+    .qa-pair { margin-bottom: 0.75rem; }
+    .qa-question { font-weight: 600; font-size: 0.9rem; }
+    .qa-answer { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.15rem; padding-left: 1rem; }
+
+    /* ─── Timing marker ─── */
+    .timing-marker {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 1.2rem 0 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .timing-marker::before {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── Transition note ─── */
+    .transition-note {
+      font-style: italic;
+      color: var(--transition-color);
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      border-top: 1px dashed var(--border);
+      margin-top: 1.2rem;
+    }
+
+    /* ─── Code blocks ─── */
+    pre {
+      background: #1E1E2E;
+      color: #CDD6F4;
+      border-radius: 8px;
+      padding: 1em;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin: 0.5rem 0;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: var(--bg-alt);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* ─── Legend ─── */
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      margin-bottom: 2rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-alt);
+      border-radius: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* ─── Print styles ─── */
+    @media print {
+      body { font-size: 14px; background: white; }
+      .page { padding: 0; max-width: 100%; }
+      .segment { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; }
+      .segment-header { background: #f5f5f5; }
+      .facilitator-say,
+      .facilitator-do,
+      .watch-for,
+      .exercise-brief,
+      .anticipated-qa {
+        background: white;
+        border-left-width: 3px;
+      }
+      .block-label { color: black !important; }
+      pre { border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════
+       DOCUMENT HEADER — customize title, date, duration
+  ═══════════════════════════════════════════════ -->
+  <header class="doc-header">
+    <div class="label">Facilitator Guide — Internal Use Only</div>
+    <h1>WORKSHOP_TITLE</h1>
+    <div class="meta">
+      <strong>Date:</strong> WORKSHOP_DATE &nbsp;·&nbsp;
+      <strong>Duration:</strong> WORKSHOP_DURATION &nbsp;·&nbsp;
+      <strong>Audience:</strong> WORKSHOP_AUDIENCE
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       COLOR LEGEND
+  ═══════════════════════════════════════════════ -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#A8D5B5"></div> Say this</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#A8BDD5"></div> Do this</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#DDB86B"></div> Watch for</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C4A0D5"></div> Exercise</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ddd"></div> Q&amp;A</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       AGENDA TABLE — one row per segment + breaks
+  ═══════════════════════════════════════════════ -->
+  <table class="agenda-table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Segment</th>
+        <th>Type</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0:00</td>
+        <td>SEGMENT_1_TITLE</td>
+        <td>Introduction</td>
+        <td>SEGMENT_1_DURATION min</td>
+      </tr>
+      <!-- Add more rows. For breaks: -->
+      <tr class="break-row">
+        <td>0:XX</td>
+        <td>Break</td>
+        <td>—</td>
+        <td>10 min</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════════════
+       SEGMENT EXAMPLE — copy and fill in for each segment
+  ═══════════════════════════════════════════════ -->
+  <div class="segment">
+    <div class="segment-header">
+      <span class="segment-number">Segment 1</span>
+      <h2>SEGMENT_TITLE</h2>
+      <span class="duration-badge">XX min</span>
+    </div>
+    <div class="segment-body">
+
+      <!-- Objectives -->
+      <div class="objectives">
+        <h3>By the end of this segment, participants can…</h3>
+        <ul>
+          <li>OBJECTIVE_1</li>
+          <li>OBJECTIVE_2</li>
+        </ul>
+      </div>
+
+      <!-- Setup / materials -->
+      <div class="block facilitator-do">
+        <div class="block-label">▶ Setup before this segment</div>
+        <p>SETUP_NOTES — e.g. "Have the repo open in VS Code, navigate to src/api/"</p>
+      </div>
+
+      <!-- === 0:00 mark === -->
+      <div class="timing-marker">0:00</div>
+
+      <!-- Opening -->
+      <div class="block facilitator-say">
+        <div class="block-label">💬 Say</div>
+        <p>OPENING_SCRIPT — what to say to open this segment. Write in full sentences.</p>
+      </div>
+
+      <!-- Room question -->
+      <div class="block facilitator-do">
+        <div class="block-label">▶ Ask the room</div>
+        <p><em>"DISCUSSION_QUESTION?"</em></p>
+        <p>Follow-up probe: <em>"PROBE_QUESTION?"</em></p>
+      </div>
+
+      <!-- Watch for signal -->
+      <div class="block watch-for">
+        <div class="block-label">👁 Watch for</div>
+        <p>CONFUSION_SIGNAL — e.g. "If participants look confused after this, reframe with: [alternative explanation]"</p>
+      </div>
+
+      <!-- === 0:10 mark === -->
+      <div class="timing-marker">0:10</div>
+
+      <!-- Core content -->
+      <div class="block facilitator-say">
+        <div class="block-label">💬 Say</div>
+        <p>CORE_CONTENT_SCRIPT</p>
+      </div>
+
+      <div class="block facilitator-do">
+        <div class="block-label">▶ Do</div>
+        <p>DEMO_STEPS — e.g. "Open the file. Point to line 42. Read it aloud."</p>
+      </div>
+
+      <!-- === 0:20 mark (exercise) === -->
+      <div class="timing-marker">0:20 — Exercise</div>
+
+      <div class="block exercise-brief">
+        <div class="block-label">✏ Exercise brief (read aloud or display)</div>
+        <p><strong>EXERCISE_TITLE</strong> — EXERCISE_DURATION minutes — Individual / Pairs / Group</p>
+        <p>EXERCISE_INSTRUCTIONS — exactly what participants should do.</p>
+        <p><em>Facilitator note: walk the room, look for WHAT_TO_LOOK_FOR. If anyone finishes early: EXTENSION_PROMPT.</em></p>
+      </div>
+
+      <!-- Anticipated Q&A -->
+      <div class="block anticipated-qa">
+        <div class="block-label">❓ Anticipated questions</div>
+        <div class="qa-pair">
+          <div class="qa-question">Q: ANTICIPATED_QUESTION_1</div>
+          <div class="qa-answer">A: SUGGESTED_ANSWER_1</div>
+        </div>
+        <div class="qa-pair">
+          <div class="qa-question">Q: ANTICIPATED_QUESTION_2</div>
+          <div class="qa-answer">A: SUGGESTED_ANSWER_2</div>
+        </div>
+      </div>
+
+      <!-- Transition -->
+      <div class="transition-note">
+        → Transition: TRANSITION_TO_NEXT_SEGMENT
+      </div>
+
+    </div><!-- /.segment-body -->
+  </div><!-- /.segment -->
+
+  <!-- Add more .segment blocks here, one per segment -->
+
+</div><!-- /.page -->
+</body>
+</html>

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESENTATION_TITLE</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- reveal.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+
+    <style>
+        /* ─── ACCENT COLOR — change only these 3 variables to re-theme ─── */
+        :root {
+            --accent:       ACCENT_HEX;   /* e.g. #2A7B9B  */
+            --accent-dark:  ACCENT_DARK;  /* e.g. #1F6280  */
+            --accent-light: ACCENT_LIGHT; /* e.g. #E4F2F7  */
+
+            /* Fixed tokens — do not change */
+            --bg:           #FAF7F2;
+            --surface:      rgba(255, 255, 255, 0.75);
+            --text:         #2C2A28;
+            --text-muted:   #6B6560;
+            --border:       rgba(255,255,255,0.5);
+            --radius:       14px;
+            --radius-sm:    8px;
+            --font-display: 'Bricolage Grotesque', Georgia, serif;
+            --font-body:    'DM Sans', sans-serif;
+            --font-mono:    'JetBrains Mono', monospace;
+        }
+
+        /* ─── BASE ─── */
+        html, body { height: 100%; margin: 0; }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 0% 0%,   rgba(42,123,155,0.06) 0, transparent 55%),
+                radial-gradient(ellipse at 100% 100%, rgba(217,79,48,0.04) 0, transparent 55%);
+        }
+
+        .reveal {
+            font-family: var(--font-body);
+            color: var(--text);
+        }
+
+        /* ─── TYPOGRAPHY ─── */
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            font-family: var(--font-display);
+            text-transform: none;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 0.4em;
+            color: var(--text);
+        }
+        .reveal h1 { font-size: 2.6em; font-weight: 800; }
+        .reveal h2 { font-size: 1.7em; font-weight: 700; }
+        .reveal h3 { font-size: 1.1em; font-weight: 600; color: var(--accent); }
+        .reveal h4 { font-size: 0.9em; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+        .reveal p, .reveal li {
+            font-size: 0.82em;
+            line-height: 1.55;
+            color: var(--text-muted);
+        }
+        .reveal strong { color: var(--text); font-weight: 700; }
+        .reveal em     { color: var(--accent); font-style: normal; font-weight: 600; }
+
+        /* ─── SLIDE LAYOUT — content always fits ─── */
+        /* reveal.js scales the entire canvas to fit the viewport.
+           We still enforce overflow:hidden as a safety net. */
+        .reveal .slides section {
+            overflow: hidden;
+            box-sizing: border-box;
+            padding: 2.5% 4%;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            /* Establish a new stacking context so nothing bleeds out */
+            isolation: isolate;
+        }
+        /* All direct children of a slide are bounded to the slide width */
+        .reveal .slides section > *:not(aside) {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .reveal .slides section > aside { display: none; } /* hide notes from layout */
+
+        /* ─── PROGRESS & CONTROLS ─── */
+        .reveal .progress      { height: 4px; background: rgba(0,0,0,0.06); }
+        .reveal .progress span { background: var(--accent); transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+        .reveal .controls      { color: var(--accent); }
+        .reveal .slide-number  { background: transparent; color: var(--text-muted); font-size: 0.38em; font-family: var(--font-mono); }
+
+        /* ─── GLASS CARD ─── */
+        .glass-card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1em 1.3em;
+            box-shadow: 0 8px 32px rgba(44,42,40,0.07);
+        }
+        .glass-card p, .glass-card li { margin: 0; }
+
+        /* ─── ACCENT CARD ─── */
+        .accent-card {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 0.9em 1.2em;
+        }
+
+        /* ─── LAYOUTS ─── */
+
+        /* Two-column split — both sides always equal height, never overlap */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2em;
+            align-items: stretch;
+            /* min-width:0 on the grid itself prevents it from exceeding its container */
+            min-width: 0;
+            width: 100%;
+        }
+        /* Every direct child of a grid must have min-width:0 so content
+           can't blow past its column boundary and overlap the other side */
+        .grid-2 > *,
+        .grid-3 > * {
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1em;
+            align-items: stretch;
+            min-width: 0;
+            width: 100%;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 1.2em;
+            min-width: 0;
+        }
+        /* Every flex child also needs min-width:0 */
+        .row > * { min-width: 0; box-sizing: border-box; }
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7em;
+            min-width: 0;
+            min-height: 0;
+        }
+        .spacer { flex: 1; }
+
+        /* Right-side visual panel — stretches to match left column, never overflows */
+        .visual-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-width: 0;
+            overflow: hidden;
+        }
+        /* Glass card inside visual-panel fills the full column width */
+        .visual-panel > .glass-card {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /*
+         * ─── POINT-COUNT LAYOUTS ──────────────────────────────────────
+         * Use .points-N on the left .col to size cards for N bullet points.
+         * The right visual panel always stretches to match.
+         *
+         * 2 pts  → large cards, generous padding
+         * 3 pts  → medium cards (default accent-card)
+         * 4 pts  → compact cards, tighter padding
+         * 5 pts  → slim badges (phase-badge style)
+         * 6 pts  → 2-column mini list inside the left panel
+         * 7 pts  → 2-column mini list, smallest text
+         * ─────────────────────────────────────────────────────────────
+         */
+
+        /* 2 points — large */
+        .points-2 .accent-card   { padding: 1.4em 1.5em; }
+        .points-2 .accent-card strong { font-size: 1.05em; display: block; margin-bottom: 0.3em; }
+        .points-2 .accent-card p  { font-size: 0.82em; }
+        .points-2               { gap: 1em; }
+
+        /* 3 points — default (accent-card base styles) */
+        .points-3               { gap: 0.75em; }
+
+        /* 4 points — compact */
+        .points-4 .accent-card   { padding: 0.65em 1em; }
+        .points-4 .accent-card strong { font-size: 0.85em; }
+        .points-4 .accent-card p  { font-size: 0.74em; }
+        .points-4               { gap: 0.55em; }
+
+        /* 5 points — slim badge row */
+        .points-5 .accent-card   { padding: 0.5em 0.9em; display: flex; align-items: center; gap: 0.7em; }
+        .points-5 .accent-card strong { font-size: 0.8em; white-space: nowrap; }
+        .points-5 .accent-card p  { font-size: 0.72em; margin: 0; }
+        .points-5               { gap: 0.45em; }
+
+        /* 6 points — two mini-columns inside the left panel */
+        .points-6 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5em;
+            align-content: start;
+        }
+        .points-6 .accent-card   { padding: 0.55em 0.8em; }
+        .points-6 .accent-card strong { font-size: 0.76em; display: block; }
+        .points-6 .accent-card p  { font-size: 0.68em; margin-top: 0.15em; }
+
+        /* 7 points — two mini-columns, tightest */
+        .points-7 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4em;
+            align-content: start;
+        }
+        .points-7 .accent-card   { padding: 0.45em 0.75em; }
+        .points-7 .accent-card strong { font-size: 0.72em; display: block; }
+        .points-7 .accent-card p  { font-size: 0.64em; margin-top: 0.1em; }
+
+        /* ─── CODE BLOCKS ─── */
+        .reveal pre {
+            border-radius: var(--radius-sm);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+            font-size: 0.52em;
+            margin: 0;
+            width: 100%;
+            line-height: 1.5;
+        }
+        .reveal code { font-family: var(--font-mono); }
+
+        /* ─── PHASE BADGE ─── */
+        .phase-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+            padding: 0.7em 1em;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: 0 4px 12px rgba(44,42,40,0.06);
+        }
+        .phase-num {
+            font-family: var(--font-display);
+            font-size: 1.3em;
+            font-weight: 800;
+            color: var(--accent);
+            opacity: 0.25;
+            line-height: 1;
+            min-width: 1.4em;
+        }
+        .phase-label { font-weight: 600; font-size: 0.8em; color: var(--text); }
+        .phase-desc  { font-size: 0.72em; color: var(--text-muted); margin: 0; }
+
+        /* ─── COLOR SWATCH ─── */
+        .swatch {
+            width: 2.2em; height: 2.2em;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            flex-shrink: 0;
+        }
+
+        /* ─── PILL LABEL ─── */
+        .pill {
+            display: inline-block;
+            padding: 0.25em 0.8em;
+            border-radius: 999px;
+            font-size: 0.65em;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            letter-spacing: 0.04em;
+            background: var(--accent-light);
+            color: var(--accent-dark);
+        }
+
+        /* ─── FILE TREE ─── */
+        .file-tree {
+            font-family: var(--font-mono);
+            font-size: 0.62em;
+            background: #1E1E2E;
+            color: #CDD6F4;
+            border-radius: var(--radius-sm);
+            padding: 1em 1.2em;
+            line-height: 1.7;
+        }
+        .file-tree .dir  { color: #89B4FA; }
+        .file-tree .file { color: #A6E3A1; }
+        .file-tree .note { color: #6C7086; }
+
+        /* ─── DIVIDER SLIDE ─── */
+        .reveal .slides section.divider {
+            text-align: center;
+            justify-content: center;
+        }
+        .reveal .slides section.divider h2 { color: white; font-size: 2.2em; }
+        .reveal .slides section.divider p  { color: rgba(255,255,255,0.75); font-size: 0.9em; }
+        .reveal .slides section.divider h4 { color: rgba(255,255,255,0.55); letter-spacing: 0.12em; }
+
+        /* ─── ANIMATIONS ─── */
+
+        /* Keyframes */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-24px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(24px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.88); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes pulseAccent {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(42,123,155,0.0); }
+            50%       { box-shadow: 0 0 0 8px rgba(42,123,155,0.12); }
+        }
+        @keyframes shimmer {
+            from { background-position: -200% center; }
+            to   { background-position:  200% center; }
+        }
+        @keyframes progressFill {
+            from { width: 0; }
+            to   { width: 100%; }
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg)   translateX(38px) rotate(0deg); }
+            to   { transform: rotate(360deg) translateX(38px) rotate(-360deg); }
+        }
+
+        /* Animate-on-current-slide: triggered by reveal.js adding .present */
+        .reveal .slides section.present .anim-fade-up   { animation: fadeUp      0.55s cubic-bezier(0.16,1,0.3,1) both; }
+        .reveal .slides section.present .anim-fade-in   { animation: fadeIn      0.5s  ease both; }
+        .reveal .slides section.present .anim-left      { animation: slideInLeft 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+        .reveal .slides section.present .anim-right     { animation: slideInRight 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+        .reveal .slides section.present .anim-scale     { animation: scaleIn     0.5s  cubic-bezier(0.16,1,0.3,1) both; }
+
+        /* Stagger delays for lists of animated children */
+        .anim-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+        .anim-stagger > *:nth-child(2) { animation-delay: 0.15s; }
+        .anim-stagger > *:nth-child(3) { animation-delay: 0.25s; }
+        .anim-stagger > *:nth-child(4) { animation-delay: 0.35s; }
+        .anim-stagger > *:nth-child(5) { animation-delay: 0.45s; }
+
+        /* Shimmer text effect for hero titles */
+        .shimmer-text {
+            background: linear-gradient(90deg, var(--text) 0%, var(--accent) 40%, var(--text) 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3.5s linear infinite;
+        }
+
+        /* Pulse ring on active elements */
+        .pulse { animation: pulseAccent 2.2s ease-in-out infinite; }
+
+        /* Animated underline on headings */
+        .reveal .slides section.present h2.underline-anim::after {
+            content: '';
+            display: block;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin-top: 0.2em;
+            animation: progressFill 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+        }
+
+        /* ─── HOVER ANIMATIONS ─── */
+
+        /* Glass cards — lift + deepen shadow */
+        .glass-card {
+            transition: transform 0.22s cubic-bezier(0.16,1,0.3,1),
+                        box-shadow 0.22s cubic-bezier(0.16,1,0.3,1),
+                        border-color 0.22s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 48px rgba(44,42,40,0.13);
+            border-color: rgba(255,255,255,0.75);
+        }
+
+        /* Phase badges — slide accent bar in from left */
+        .phase-badge {
+            transition: background 0.2s ease, transform 0.2s cubic-bezier(0.16,1,0.3,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .phase-badge::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.2s cubic-bezier(0.16,1,0.3,1);
+        }
+        .phase-badge:hover {
+            background: rgba(255,255,255,0.92);
+            transform: translateX(4px);
+        }
+        .phase-badge:hover::before { transform: scaleY(1); }
+        .phase-badge:hover .phase-num { opacity: 0.45; }
+
+        /* Accent cards — border brightens + subtle background shift */
+        .accent-card {
+            transition: border-color 0.2s ease, background 0.2s ease,
+                        transform 0.2s cubic-bezier(0.16,1,0.3,1);
+        }
+        .accent-card:hover {
+            background: color-mix(in srgb, var(--accent-light) 80%, white);
+            border-left-color: var(--accent-dark);
+            transform: translateX(3px);
+        }
+
+        /* Pills — fill on hover */
+        .pill {
+            transition: background 0.18s ease, color 0.18s ease,
+                        transform 0.18s cubic-bezier(0.16,1,0.3,1);
+        }
+        .pill:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.06);
+        }
+
+        /* Swatches — pop + shadow on hover */
+        .swatch {
+            transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease;
+        }
+        .swatch:hover {
+            transform: scale(1.18) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* kbd elements — invert on hover */
+        kbd {
+            transition: background 0.15s ease, color 0.15s ease,
+                        transform 0.15s cubic-bezier(0.16,1,0.3,1);
+            display: inline-block;
+        }
+        kbd:hover {
+            background: var(--accent) !important;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        /* File tree lines — highlight row on hover */
+        .file-tree div {
+            transition: background 0.15s ease, padding-left 0.15s ease;
+            border-radius: 4px;
+            padding: 0 4px;
+            margin: 0 -4px;
+        }
+        .file-tree div:hover {
+            background: rgba(137,180,250,0.08);
+            padding-left: 8px;
+        }
+
+        /* Phase number glow on badge hover */
+        .phase-badge:hover .phase-num {
+            text-shadow: 0 0 12px var(--accent);
+        }
+
+        /* ─── SECTION DIVIDER CIRCLE ZOOM ─── */
+        .reveal .slides section.divider::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: var(--accent-dark);
+            border-radius: 50%;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+        }
+        .reveal .slides section.divider.present::before {
+            animation: dividerBg 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        @keyframes dividerBg {
+            from { width: 0; height: 0; opacity: 0.8; }
+            to   { width: 220vw; height: 220vw; opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 1 — TITLE
+             Replace: PRESENTATION_TITLE, PRESENTATION_SUBTITLE, PRESENTER_NAME, PRESENTATION_DATE
+             ══════════════════════════════════════════ -->
+        <section data-auto-animate>
+            <h4 class="anim-fade-in" style="margin-bottom:0.8em;">PRESENTER_NAME · PRESENTATION_DATE</h4>
+            <h1 data-id="main-title" class="shimmer-text">PRESENTATION_TITLE</h1>
+            <p class="anim-fade-up" style="font-size:1em; margin-top:0.5em;">PRESENTATION_SUBTITLE</p>
+            <div class="row anim-fade-up" style="margin-top:1.4em; gap:0.6em; animation-delay:0.2s;">
+                <!-- Replace with format pills relevant to the project -->
+                <span class="pill">Course</span>
+                <span class="pill">Slides</span>
+                <span class="pill">Workshop</span>
+            </div>
+            <aside class="notes">
+                Welcome everyone. Today we're looking at a skill that turns any codebase into a polished learning artifact — no CS degree required to read it, and no design skills required to produce it. I'll walk you through what it does, how it works under the hood, and what you get out of it in practice.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 2 — AGENDA
+             Replace grid cards with real sections
+             ══════════════════════════════════════════ -->
+        <section data-auto-animate>
+            <h2 class="underline-anim">Agenda</h2>
+            <div class="grid-2 anim-stagger" style="margin-top:1em;">
+                <div class="glass-card anim-fade-up">
+                    <h3>01 · The Problem</h3>
+                    <p>Why codebases stay locked inside people's heads</p>
+                </div>
+                <div class="glass-card anim-fade-up">
+                    <h3>02 · Three Formats</h3>
+                    <p>Course, Slides, Workshop — when to use each</p>
+                </div>
+                <div class="glass-card anim-fade-up">
+                    <h3>03 · How It Works</h3>
+                    <p>The phases, the file structure, the design system</p>
+                </div>
+                <div class="glass-card anim-fade-up">
+                    <h3>04 · In Practice</h3>
+                    <p>A live example and three key takeaways</p>
+                </div>
+            </div>
+            <aside class="notes">
+                We'll move through four sections. The first two are about the "what and why" — the problem this solves and the three output formats. Then we'll go under the hood to see how it works. We'll close with a concrete example and the key points to take away.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SECTION DIVIDER — replace label and subtitle
+             ══════════════════════════════════════════ -->
+        <section class="divider" data-background-color="#1F6280">
+            <h4 class="anim-fade-in">Part One</h4>
+            <h2 class="anim-fade-up">The Problem</h2>
+            <p class="anim-fade-up" style="animation-delay:0.1s;">Why great codebases stay unexplained</p>
+            <aside class="notes">
+                Let's start with the problem. Every engineering team I've spoken to has the same frustration — there's a gap between building something and being able to explain it to anyone who wasn't there when it was built.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT SLIDE EXAMPLE — point slide
+             ══════════════════════════════════════════ -->
+        <section>
+            <h2 class="underline-anim">Built it. Can't explain it.</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col anim-stagger">
+                    <div class="accent-card anim-fade-up">
+                        <strong>The builder</strong>
+                        <p>Understands every file, every decision, every tradeoff</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Everyone else</strong>
+                        <p>Sees a wall of code with no entry point</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>The cost</strong>
+                        <p>Onboarding slows. Knowledge silos form. AI gets stuck.</p>
+                    </div>
+                </div>
+                <div class="glass-card anim-right" style="text-align:center; padding:1.5em;">
+                    <div style="font-size:2.8em; margin-bottom:0.2em;">🧠→📦</div>
+                    <p style="font-size:0.78em;">Knowledge locked inside one person's head doesn't scale</p>
+                </div>
+            </div>
+            <aside class="notes">
+                The builder has all the context — why Redis was chosen over Postgres, why the auth layer sits between the API and the database, why the state machine was built that way. But that context lives entirely in their head. Everyone else who touches the codebase starts from zero. This is the problem we're solving.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SECTION DIVIDER
+             ══════════════════════════════════════════ -->
+        <section class="divider" data-background-color="#1F6280">
+            <h4 class="anim-fade-in">Part Two</h4>
+            <h2 class="anim-fade-up">Three Formats</h2>
+            <p class="anim-fade-up" style="animation-delay:0.1s;">One codebase. Three different audiences.</p>
+            <aside class="notes">
+                The skill produces three different output formats from the same codebase analysis. Each one is designed for a specific audience and context — self-paced learners, live presenters, or workshop facilitators.
+            </aside>
+        </section>
+
+        <!-- Format A -->
+        <section>
+            <div class="row" style="align-items:flex-start; gap:1.4em;">
+                <div class="col anim-left" style="flex:1;">
+                    <span class="pill" style="align-self:flex-start;">Format A</span>
+                    <h2>Interactive Course</h2>
+                    <p>A single-page HTML file that opens in any browser — no setup, no dependencies, works offline.</p>
+                    <div class="col anim-stagger" style="margin-top:0.4em; gap:0.5em;">
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Scroll-based modules</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Code ↔ plain English translations</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Animated data flow diagrams</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Interactive quizzes + glossary tooltips</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card anim-right" style="flex:1; font-family:var(--font-mono); font-size:0.6em; background:#1E1E2E; color:#CDD6F4;">
+                    <div style="color:#6C7086; margin-bottom:0.5em;">// output structure</div>
+                    <div><span style="color:#89B4FA;">course/</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#A6E3A1;">index.html</span> &nbsp;<span style="color:#6C7086;">← open this</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#F9E2AF;">styles.css</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#F9E2AF;">main.js</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#89B4FA;">modules/</span></div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#A6E3A1;">01-intro.html</span></div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#A6E3A1;">02-actors.html</span></div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6C7086;">...</span></div>
+                </div>
+            </div>
+            <aside class="notes">
+                Format A is the richest output. It's a full interactive course with scroll-based navigation, code-to-English translations side by side, animated diagrams showing how data flows through the system, and embedded quizzes that test application rather than memorization. The whole thing is a single HTML file — open it in a browser and you're done.
+            </aside>
+        </section>
+
+        <!-- Format B -->
+        <section>
+            <div class="row" style="align-items:flex-start; gap:1.4em;">
+                <div class="col anim-left" style="flex:1;">
+                    <span class="pill" style="align-self:flex-start;">Format B</span>
+                    <h2>Slide Deck</h2>
+                    <p>A reveal.js presentation that runs in the browser. Warm design, speaker notes, fullscreen mode.</p>
+                    <div class="col anim-stagger" style="margin-top:0.4em; gap:0.5em;">
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Section dividers + fragment reveals</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Architecture diagrams in HTML/CSS</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Speaker notes (<code>S</code> key)</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">→</span>
+                            <div><div class="phase-label">Scales to any window size</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card anim-right" style="flex:1; text-align:center; padding:1.6em;">
+                    <p style="font-size:0.72em; margin-bottom:0.8em; color:var(--text-muted);">Keyboard controls</p>
+                    <div class="col" style="gap:0.5em; align-items:center;">
+                        <div class="row" style="gap:0.5em;"><kbd style="background:#1E1E2E;color:#CDD6F4;padding:0.2em 0.6em;border-radius:4px;font-family:var(--font-mono);font-size:0.8em;">Space</kbd><span style="font-size:0.75em;">advance</span></div>
+                        <div class="row" style="gap:0.5em;"><kbd style="background:#1E1E2E;color:#CDD6F4;padding:0.2em 0.6em;border-radius:4px;font-family:var(--font-mono);font-size:0.8em;">S</kbd><span style="font-size:0.75em;">speaker notes</span></div>
+                        <div class="row" style="gap:0.5em;"><kbd style="background:#1E1E2E;color:#CDD6F4;padding:0.2em 0.6em;border-radius:4px;font-family:var(--font-mono);font-size:0.8em;">F</kbd><span style="font-size:0.75em;">fullscreen</span></div>
+                        <div class="row" style="gap:0.5em;"><kbd style="background:#1E1E2E;color:#CDD6F4;padding:0.2em 0.6em;border-radius:4px;font-family:var(--font-mono);font-size:0.8em;">O</kbd><span style="font-size:0.75em;">overview</span></div>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">
+                Format B is what you're looking at right now. A reveal.js presentation customized with the same warm design system — Bricolage Grotesque headings, DM Sans body, teal or vermillion accent. It scales to fit any window size automatically, so it works on a laptop, a projector, or an external monitor without any tweaking.
+            </aside>
+        </section>
+
+        <!-- Format C -->
+        <section>
+            <div class="row" style="align-items:flex-start; gap:1.4em;">
+                <div class="col anim-left" style="flex:1;">
+                    <span class="pill" style="align-self:flex-start;">Format C</span>
+                    <h2>Workshop</h2>
+                    <p>Two files: an HTML facilitator guide and a Markdown participant handout (converts to Word via pandoc).</p>
+                    <div class="col anim-stagger" style="margin-top:0.4em; gap:0.5em;">
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">🟢</span>
+                            <div><div class="phase-label">Say — facilitator script</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">🔵</span>
+                            <div><div class="phase-label">Do — actions and demos</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">🟡</span>
+                            <div><div class="phase-label">Watch for — participant signals</div></div>
+                        </div>
+                        <div class="phase-badge anim-fade-up">
+                            <span class="phase-num">🟣</span>
+                            <div><div class="phase-label">Exercise — hands-on activities</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card anim-right" style="flex:1; font-family:var(--font-mono); font-size:0.6em; background:#1E1E2E; color:#CDD6F4;">
+                    <div style="color:#6C7086; margin-bottom:0.5em;">// output structure</div>
+                    <div><span style="color:#89B4FA;">workshop/</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#A6E3A1;">workshop.html</span> &nbsp;<span style="color:#6C7086;">← facilitator</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#A6E3A1;">workshop.md</span> &nbsp;&nbsp;<span style="color:#6C7086;">← participants</span></div>
+                    <div>&nbsp;&nbsp;<span style="color:#F9E2AF;">workshop.docx</span> &nbsp;<span style="color:#6C7086;">← via pandoc</span></div>
+                </div>
+            </div>
+            <aside class="notes">
+                Format C generates two complementary documents. The HTML facilitator guide is color-coded so the presenter can orient instantly — green is what to say, blue is what to do, amber is what to watch for, purple is an exercise. The participant handout is intentionally sparse: concept summaries, key vocabulary, and blank space for writing. It converts to a Word doc via pandoc so it's printable.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SECTION DIVIDER
+             ══════════════════════════════════════════ -->
+        <section class="divider" data-background-color="#1F6280">
+            <h4 class="anim-fade-in">Part Three</h4>
+            <h2 class="anim-fade-up">How It Works</h2>
+            <p class="anim-fade-up" style="animation-delay:0.1s;">Under the hood of the skill</p>
+            <aside class="notes">
+                Now let's look under the hood. I want to show you the four phases the skill runs through, the key files involved, and the design system that makes every output look the way it does.
+            </aside>
+        </section>
+
+        <!-- The 4 phases — fragment slide -->
+        <section>
+            <h2 class="underline-anim">Four Phases</h2>
+            <div class="col anim-stagger" style="margin-top:0.9em; gap:0.6em;">
+                <div class="phase-badge anim-fade-up fragment" data-fragment-index="1">
+                    <span class="phase-num">01</span>
+                    <div>
+                        <div class="phase-label">Analyze</div>
+                        <p class="phase-desc">Read all key files, trace data flows, map the cast of characters and how they communicate</p>
+                    </div>
+                </div>
+                <div class="phase-badge anim-fade-up fragment" data-fragment-index="2">
+                    <span class="phase-num">02</span>
+                    <div>
+                        <div class="phase-label">Design</div>
+                        <p class="phase-desc">Choose 4–6 modules (or slide sections), write the teaching arc, select interactive elements</p>
+                    </div>
+                </div>
+                <div class="phase-badge anim-fade-up fragment" data-fragment-index="3">
+                    <span class="phase-num">03</span>
+                    <div>
+                        <div class="phase-label">Build</div>
+                        <p class="phase-desc">Write module HTML files with real code snippets, translations, animations, and quizzes</p>
+                    </div>
+                </div>
+                <div class="phase-badge anim-fade-up fragment" data-fragment-index="4">
+                    <span class="phase-num">04</span>
+                    <div>
+                        <div class="phase-label">Assemble</div>
+                        <p class="phase-desc">Run build.sh — concatenates all parts into a single index.html, ready to open</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">
+                The skill runs four phases. Phase 1 is pure reading — Claude works through the codebase to understand what it does and how it fits together. Phase 2 designs the curriculum. Phase 3 writes the content module by module, which is where the quality comes from — each module is independent and can be written by a separate agent in parallel. Phase 4 runs build.sh to assemble everything into one file.
+            </aside>
+        </section>
+
+        <!-- File structure -->
+        <section>
+            <h2 class="underline-anim">The File Structure</h2>
+            <div class="grid-2" style="margin-top:0.9em; align-items:start;">
+                <div class="file-tree anim-left">
+<span class="dir">codebase-to-anything/</span>
+├── <span class="file">SKILL.md</span>         <span class="note"># brain</span>
+├── <span class="dir">assets/</span>
+│   ├── <span class="file">_base.html</span>   <span class="note"># shell</span>
+│   ├── <span class="file">styles.css</span>   <span class="note"># design system</span>
+│   └── <span class="file">slides-template.html</span>
+├── <span class="dir">references/</span>
+│   ├── <span class="file">content-philosophy.md</span>
+│   ├── <span class="file">design-system.md</span>
+│   └── <span class="file">interactive-elements.md</span>
+└── <span class="dir">scripts/</span>
+    ├── <span class="file">main.js</span>      <span class="note"># JS engine</span>
+    └── <span class="file">build.sh</span>     <span class="note"># assembler</span>
+                </div>
+                <div class="col anim-stagger" style="gap:0.6em;">
+                    <div class="accent-card anim-fade-up">
+                        <strong>SKILL.md</strong>
+                        <p>The instruction set Claude reads. Defines all three format paths.</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>references/</strong>
+                        <p>Rules docs for content, design tokens, interactive element patterns.</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>main.js + build.sh</strong>
+                        <p>Copied verbatim into every course — never regenerated.</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">
+                The skill is itself a codebase. SKILL.md is the brain — it defines all three format paths and the rules for each phase. The references folder contains the detailed specs Claude reads as it builds: design tokens, content philosophy, interactive element HTML patterns. And main.js plus build.sh are always copied verbatim — Claude never rewrites them, which keeps the output consistent.
+            </aside>
+        </section>
+
+        <!-- Design system -->
+        <section>
+            <h2 class="underline-anim">The Design System</h2>
+            <div class="grid-2" style="margin-top:0.9em; align-items:start;">
+                <div class="col anim-stagger" style="gap:0.7em;">
+                    <div class="phase-badge anim-fade-up">
+                        <div class="swatch" style="background:#FAF7F2; border:1px solid #E5DFD6;"></div>
+                        <div><div class="phase-label">Warm off-white background</div><p class="phase-desc">#FAF7F2 — like aged paper, never cold white</p></div>
+                    </div>
+                    <div class="phase-badge anim-fade-up">
+                        <div class="swatch" style="background:var(--accent);"></div>
+                        <div><div class="phase-label">Bold accent color</div><p class="phase-desc">One per course — vermillion, teal, amber, forest</p></div>
+                    </div>
+                    <div class="phase-badge anim-fade-up">
+                        <div class="swatch" style="background:#1E1E2E;"></div>
+                        <div><div class="phase-label">Dark code blocks</div><p class="phase-desc">#1E1E2E with Catppuccin syntax colors</p></div>
+                    </div>
+                </div>
+                <div class="col anim-right" style="gap:0.7em;">
+                    <div class="glass-card anim-fade-up">
+                        <h4 style="margin-bottom:0.3em;">Typography trio</h4>
+                        <p style="font-family:var(--font-display); font-size:0.9em; font-weight:700; margin-bottom:0.2em;">Bricolage Grotesque — headings</p>
+                        <p style="font-family:var(--font-body); font-size:0.82em; margin-bottom:0.2em;">DM Sans — body text</p>
+                        <p style="font-family:var(--font-mono); font-size:0.75em;">JetBrains Mono — code</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>One CSS variable re-themes everything</strong>
+                        <p>Change <code style="font-family:var(--font-mono); font-size:0.85em;">--color-accent</code> and the entire course updates</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">
+                The design system is opinionated by design. Warm off-white backgrounds instead of cold white — it reads like a well-designed notebook, not a generic SaaS app. One bold accent color, chosen to fit the project's personality. The typography trio is fixed: Bricolage Grotesque for headings, DM Sans for body text, JetBrains Mono for code. And the whole thing is driven by CSS custom properties — change the accent variable and every output re-themes automatically.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SECTION DIVIDER
+             ══════════════════════════════════════════ -->
+        <section class="divider" data-background-color="#1F6280">
+            <h4 class="anim-fade-in">Part Four</h4>
+            <h2 class="anim-fade-up">In Practice</h2>
+            <p class="anim-fade-up" style="animation-delay:0.1s;">What it looks like when you use it</p>
+            <aside class="notes">
+                Let's bring this to life. I want to show you what the output actually looks like, and then close with three things I want you to walk away remembering.
+            </aside>
+        </section>
+
+        <!-- Live example -->
+        <section>
+            <h2 class="underline-anim">What a Course Looks Like</h2>
+            <div class="grid-2" style="margin-top:0.9em; align-items:start;">
+                <div class="col anim-stagger" style="gap:0.6em;">
+                    <div class="phase-badge anim-fade-up">
+                        <span class="phase-num">01</span>
+                        <div><div class="phase-label">Module intro</div><p class="phase-desc">Large number, warm background, one-line subtitle</p></div>
+                    </div>
+                    <div class="phase-badge anim-fade-up">
+                        <span class="phase-num">02</span>
+                        <div><div class="phase-label">Code ↔ English</div><p class="phase-desc">Real code left, plain explanation right</p></div>
+                    </div>
+                    <div class="phase-badge anim-fade-up">
+                        <span class="phase-num">03</span>
+                        <div><div class="phase-label">Animations</div><p class="phase-desc">Group chat, data flow, architecture diagram</p></div>
+                    </div>
+                    <div class="phase-badge anim-fade-up">
+                        <span class="phase-num">04</span>
+                        <div><div class="phase-label">Quiz</div><p class="phase-desc">Scenario-based — "which files would you change?"</p></div>
+                    </div>
+                </div>
+                <div class="glass-card anim-right" style="background:#1E1E2E; padding:1.2em;">
+                    <div style="font-family:var(--font-mono); font-size:0.58em; color:#CDD6F4; line-height:1.7;">
+                        <div style="color:#6C7086;">// say "turn this into a course"</div>
+                        <div><span style="color:#CBA6F7;">Phase 1:</span> <span style="color:#A6E3A1;">read codebase</span></div>
+                        <div><span style="color:#CBA6F7;">Phase 2:</span> <span style="color:#A6E3A1;">design 5 modules</span></div>
+                        <div><span style="color:#CBA6F7;">Phase 3:</span> <span style="color:#A6E3A1;">write HTML</span></div>
+                        <div><span style="color:#CBA6F7;">Phase 4:</span> <span style="color:#89B4FA;">bash build.sh</span></div>
+                        <div style="margin-top:0.5em; color:#A6E3A1;">✓ index.html ready</div>
+                        <div style="color:#6C7086;">  open in browser → done</div>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">
+                Here's the full learner experience in a course. Each module opens with a large number and subtitle. Then the content alternates between code-to-English translations — real code from the codebase on the left, plain explanation on the right — and interactive animations. Every module closes with a scenario quiz. The whole thing is assembled from independent module files by a two-line shell script.
+            </aside>
+        </section>
+
+        <!-- Three takeaways -->
+        <section>
+            <h2 class="underline-anim">Three Things to Remember</h2>
+            <div class="col anim-stagger" style="margin-top:1em; gap:0.8em;">
+                <div class="glass-card hoverable anim-fade-up fragment" data-fragment-index="1">
+                    <h3>Point it at any codebase</h3>
+                    <p>Local folder, GitHub URL, or the current project — the skill reads it and figures out what it does</p>
+                </div>
+                <div class="glass-card hoverable anim-fade-up fragment" data-fragment-index="2">
+                    <h3>Pick the format for your audience</h3>
+                    <p>Course for self-paced learners · Slides for stakeholders · Workshop for live sessions</p>
+                </div>
+                <div class="glass-card hoverable anim-fade-up fragment" data-fragment-index="3">
+                    <h3>Everything runs in the browser</h3>
+                    <p>No dependencies, no build step, no hosting — open the file and you're done</p>
+                </div>
+            </div>
+            <aside class="notes">
+                Three things. First: it works on anything — any repo, any language, any complexity level. Second: the format choice is an audience decision, not a technical one. Ask yourself who you're trying to reach and how they'll consume it. Third: all three outputs are self-contained HTML — no frameworks, no build pipelines, no hosting required. You open a file in a browser and it works.
+            </aside>
+        </section>
+
+        <!-- Q&A -->
+        <section style="text-align:center;">
+            <h1 class="shimmer-text anim-scale" style="font-size:3.5em; margin-bottom:0.3em;">Questions?</h1>
+            <p class="anim-fade-up" style="font-size:0.85em; animation-delay:0.15s;">
+                Try it: open any project in Claude Code and say<br>
+                <code style="font-family:var(--font-mono); background:var(--accent-light); color:var(--accent-dark); padding:0.2em 0.6em; border-radius:4px; font-size:0.9em;">"turn this into a course"</code>
+            </p>
+            <div class="row anim-fade-up" style="justify-content:center; margin-top:1.2em; gap:0.6em; animation-delay:0.25s;">
+                <span class="pill">Course</span>
+                <span class="pill">Slides</span>
+                <span class="pill">Workshop</span>
+            </div>
+            <aside class="notes">
+                That's everything. Happy to take questions on any part of the skill — how it decides on the curriculum, how to customize the design system, how to get consistently good output on large codebases, or anything else. And if you want to try it yourself: open any project in Claude Code and say "turn this into a course." That's all it takes.
+            </aside>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             LAYOUT REFERENCE SLIDES
+             Copy any of these as a starting point.
+             Both columns always stretch to equal height.
+             Left: .col.points-N wrapping .accent-card items
+             Right: .visual-panel wrapping a .glass-card
+             ══════════════════════════════════════════════════════ -->
+
+        <!-- 2 POINTS -->
+        <section>
+            <h2 class="underline-anim">Slide Title — 2 Points</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col points-2 anim-left">
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point One</strong>
+                        <p>Supporting detail that elaborates on this point with a little more context</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Two</strong>
+                        <p>Supporting detail that elaborates on this point with a little more context</p>
+                    </div>
+                </div>
+                <div class="visual-panel anim-right">
+                    <div class="glass-card" style="width:100%; text-align:center; padding:2em;">
+                        <div style="font-size:3em; margin-bottom:0.3em;">✦</div>
+                        <p style="font-size:0.78em;">Visual, diagram, or key stat goes here</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Template: 2-point layout. Large cards, generous padding. Both columns equal height.</aside>
+        </section>
+
+        <!-- 3 POINTS -->
+        <section>
+            <h2 class="underline-anim">Slide Title — 3 Points</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col points-3 anim-left">
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point One</strong>
+                        <p>Supporting detail for this point</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Two</strong>
+                        <p>Supporting detail for this point</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Three</strong>
+                        <p>Supporting detail for this point</p>
+                    </div>
+                </div>
+                <div class="visual-panel anim-right">
+                    <div class="glass-card" style="width:100%; text-align:center; padding:1.8em;">
+                        <div style="font-size:2.6em; margin-bottom:0.3em;">✦</div>
+                        <p style="font-size:0.78em;">Visual, diagram, or key stat goes here</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Template: 3-point layout. Default accent-card sizing.</aside>
+        </section>
+
+        <!-- 4 POINTS -->
+        <section>
+            <h2 class="underline-anim">Slide Title — 4 Points</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col points-4 anim-left">
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point One</strong>
+                        <p>Supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Two</strong>
+                        <p>Supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Three</strong>
+                        <p>Supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Four</strong>
+                        <p>Supporting detail</p>
+                    </div>
+                </div>
+                <div class="visual-panel anim-right">
+                    <div class="glass-card" style="width:100%; text-align:center; padding:1.6em;">
+                        <div style="font-size:2.2em; margin-bottom:0.3em;">✦</div>
+                        <p style="font-size:0.78em;">Visual, diagram, or key stat goes here</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Template: 4-point layout. Compact cards, tighter padding.</aside>
+        </section>
+
+        <!-- 5 POINTS -->
+        <section>
+            <h2 class="underline-anim">Slide Title — 5 Points</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col points-5 anim-left">
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point One</strong>
+                        <p>Brief supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Two</strong>
+                        <p>Brief supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Three</strong>
+                        <p>Brief supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Four</strong>
+                        <p>Brief supporting detail</p>
+                    </div>
+                    <div class="accent-card anim-fade-up">
+                        <strong>Point Five</strong>
+                        <p>Brief supporting detail</p>
+                    </div>
+                </div>
+                <div class="visual-panel anim-right">
+                    <div class="glass-card" style="width:100%; text-align:center; padding:1.4em;">
+                        <div style="font-size:2em; margin-bottom:0.3em;">✦</div>
+                        <p style="font-size:0.78em;">Visual or key stat</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Template: 5-point layout. Slim badge-row style cards.</aside>
+        </section>
+
+        <!-- 6 POINTS -->
+        <section>
+            <h2 class="underline-anim">Slide Title — 6 Points</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col points-6 anim-left">
+                    <div class="accent-card anim-fade-up"><strong>Point One</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Two</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Three</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Four</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Five</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Six</strong><p>Detail</p></div>
+                </div>
+                <div class="visual-panel anim-right">
+                    <div class="glass-card" style="width:100%; text-align:center; padding:1.4em;">
+                        <div style="font-size:2em; margin-bottom:0.3em;">✦</div>
+                        <p style="font-size:0.78em;">Visual or key stat</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Template: 6-point layout. Two mini-columns inside the left panel.</aside>
+        </section>
+
+        <!-- 7 POINTS -->
+        <section>
+            <h2 class="underline-anim">Slide Title — 7 Points</h2>
+            <div class="grid-2" style="margin-top:0.9em;">
+                <div class="col points-7 anim-left">
+                    <div class="accent-card anim-fade-up"><strong>Point One</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Two</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Three</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Four</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Five</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up"><strong>Point Six</strong><p>Detail</p></div>
+                    <div class="accent-card anim-fade-up" style="grid-column: 1 / -1;"><strong>Point Seven</strong><p>Full-width when odd count — or remove this card and keep 6</p></div>
+                </div>
+                <div class="visual-panel anim-right">
+                    <div class="glass-card" style="width:100%; text-align:center; padding:1.4em;">
+                        <div style="font-size:2em; margin-bottom:0.3em;">✦</div>
+                        <p style="font-size:0.78em;">Visual or key stat</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Template: 7-point layout. Two mini-columns, tightest sizing. Consider splitting into two slides if content feels crowded.</aside>
+        </section>
+
+    </div><!-- /.slides -->
+</div><!-- /.reveal -->
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+
+<script>
+    Reveal.initialize({
+        hash: true,
+        center: true,
+        transition: 'fade',
+        backgroundTransition: 'fade',
+        autoAnimateEasing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        autoAnimateDuration: 0.7,
+        controls: true,
+        progress: true,
+        slideNumber: 'c/t',
+        // Canvas dimensions — reveal.js scales this to fit any window size.
+        // Content is clipped at these boundaries (overflow: hidden on sections).
+        width: 1280,
+        height: 720,
+        margin: 0.06,
+        minScale: 0.2,
+        maxScale: 2.0,
+        plugins: [ RevealHighlight ]
+    });
+</script>
+
+</body>
+</html>
